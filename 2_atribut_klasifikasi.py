@@ -164,3 +164,83 @@ def Check_outlierdone(data):
   plt.subplots_adjust(wspace=0)
 
 Check_outlierdone(DataTrain)
+
+DataTest.fillna(DataTest.mean(), inplace=True)
+DataTest.head(3)
+DataTest.isna().sum()
+
+DataTest['Jenis_Kelamin']= LabelEncoder().fit_transform(DataTest['Jenis_Kelamin']) 
+DataTest['Umur_Kendaraan']= LabelEncoder().fit_transform(DataTest['Umur_Kendaraan']) 
+# DataTest['Kendaraan_Rusak']= LabelEncoder().fit_transform(DataTest['Kendaraan_Rusak']) 
+
+DataTest['Kendaraan_Rusak'] = (DataTest['Kendaraan_Rusak']=='Pernah').astype(int)
+
+DataTest.head(3)
+
+#check correlation
+heatmap(DataTest)
+
+#outlier
+Check_outlier(DataTest)
+
+#handle outlier 
+while True:
+  qlo1, qlo3 = np.percentile(DataTest['SIM'],[25,75])
+  iqrlo = qlo3 - qlo1
+  lowerlo = qlo1 - (1.5 * iqrlo)
+  upperlo = qlo3 + (1.5 * iqrlo)
+  outlierlo = DataTest[(DataTest['SIM'] < (lowerlo)) | (DataTest['SIM'] > (upperlo))]
+  print('amount of outlier data',outlierlo.shape[0]) #amount of outlier data
+  idxlo = outlierlo.index
+  DataTest.drop(idxlo, inplace=True) #drop outlier data
+  if (outlierlo.shape[0] <= 0):
+    break
+
+DataTest['SIM'].describe()
+
+#handle outlier 
+while True:
+  qlo1, qlo3 = np.percentile(DataTest['Premi'],[25,75])
+  iqrlo = qlo3 - qlo1
+  lowerlo = qlo1 - (1.5 * iqrlo)
+  upperlo = qlo3 + (1.5 * iqrlo)
+  outlierlo = DataTest[(DataTest['Premi'] < (lowerlo)) | (DataTest['Premi'] > (upperlo))]
+  print('amount of outlier data',outlierlo.shape[0]) #amount of outlier data
+  idxlo = outlierlo.index
+  DataTest.drop(idxlo, inplace=True) #drop outlier data
+  if (outlierlo.shape[0] <= 0):
+    break
+
+DataTest['Premi'].describe()
+
+#handle outlier 
+while True:
+  qlo1, qlo3 = np.percentile(DataTest['Umur'],[25,75])
+  iqrlo = qlo3 - qlo1
+  lowerlo = qlo1 - (1.5 * iqrlo)
+  upperlo = qlo3 + (1.5 * iqrlo)
+  outlierlo = DataTest[(DataTest['Umur'] < (lowerlo)) | (DataTest['Umur'] > (upperlo))]
+  print('amount of outlier data',outlierlo.shape[0]) #amount of outlier data
+  idxlo = outlierlo.index
+  DataTest.drop(idxlo, inplace=True) #drop outlier data
+  if (outlierlo.shape[0] <= 0):
+    break
+
+DataTest['Umur'].describe()
+
+#outlier
+def Check_outlier(data):
+  plt.figure(figsize=(60, 60))
+  f, axes = plt.subplots(1, 9)
+  sns.boxplot(y= DataTest['Jenis_Kelamin'], ax= axes[0], color='rosybrown')
+  sns.boxplot(y= DataTest['Umur'], ax= axes[1], color='rosybrown')
+  sns.boxplot(y= DataTest['SIM'], ax=axes[2], color='rosybrown')
+  sns.boxplot(y= DataTest['Kode_Daerah'], ax=axes[3], color='rosybrown')
+  sns.boxplot(y= DataTest['Sudah_Asuransi'], ax=axes[4], color='rosybrown')
+  sns.boxplot(y= DataTest['Umur_Kendaraan'], ax=axes[5], color='rosybrown')
+  sns.boxplot(y= DataTest['Premi'], ax=axes[6], color='rosybrown')
+  sns.boxplot(y= DataTest['Kanal_Penjualan'], ax=axes[7], color='rosybrown')
+  sns.boxplot(y= DataTest['Lama_Berlangganan'], ax=axes[8], color='rosybrown')
+  plt.subplots_adjust(wspace=0)
+
+Check_outlier(DataTest)
