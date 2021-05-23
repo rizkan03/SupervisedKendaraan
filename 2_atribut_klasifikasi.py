@@ -244,3 +244,98 @@ def Check_outlier(data):
   plt.subplots_adjust(wspace=0)
 
 Check_outlier(DataTest)
+
+"""## Pemodelan"""
+
+DTrain = DataTrain[['Umur','Premi','Tertarik']]
+DTrain.head()
+
+targetTrain = DTrain['Tertarik']
+Train = DTrain.drop(["Tertarik"], axis=1)
+Train.head(3)
+
+DTest = DataTest[['Umur','Premi','Tertarik']]
+DTest.head()
+
+targetTest = DTest['Tertarik']
+Test = DTest.drop(['Tertarik'], axis=1)
+Test.head(3)
+
+print(targetTrain)
+print(targetTest)
+
+"""### Split data"""
+
+Xtrain, ytrain = Train[:], targetTrain
+Xtest, ytest = Test[:], targetTest
+
+Xtrain = Xtrain.values
+Xtest = Xtest.values
+ytrain = ytrain.values
+ytest = ytest.values
+
+Xtrain
+
+Xtest
+
+ytrain
+
+ytest
+
+len(Xtest)
+
+len(ytest)
+
+"""### SVM"""
+
+# from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+# import sklearn.metrics as metrics
+svm = SVC()
+svm.fit(Xtrain, ytrain)
+SVM_pred = svm.predict(Xtest)
+print("Support Vector Machine\n")
+# for i in range(len(SVM_pred)):
+#     print(SVM_pred[i])
+
+print("F1-SCORE ",f1(ytest,SVM_pred,average='macro') * 100)
+
+print("ACCURACY ",acc(ytest,SVM_pred) * 100)
+
+print("PRECISION ",prec(ytest,SVM_pred,average='macro') * 100)
+
+print("RECALL",recall(ytest,SVM_pred,average='macro') * 100)
+
+TestEvalSVM = DTest.copy()
+TestEvalSVM['Hasil Prediksi SVM'] = SVM_pred
+
+TestEvalSVM.head()
+
+"""### Evaluasi"""
+
+from sklearn import metrics
+
+def confusion_metrics (y_test,y_pred):
+    #Showing Confusion Matrix to know True Positive, False Positive, True Negative and False Negative   
+    cm = metrics.confusion_matrix(y_test, y_pred)
+    cm_df = pd.DataFrame(cm, 
+                         columns = ['Predicted Negative', 'Predicted Positive'], 
+                         index = ['Actual Negative', 'Actual Positive'])
+
+    #Assign True Positive, False Positive, True Negative and False Negative intu variable
+    TN = cm_df.loc['Actual Negative','Predicted Negative']
+    FN = cm_df.loc['Actual Positive','Predicted Negative']
+    FP = cm_df.loc['Actual Negative','Predicted Positive']
+    TP = cm_df.loc['Actual Positive','Predicted Positive']
+    
+    print('True Negative  : ',TN)
+    print('False Negative : ',FN)
+    print('False Positive : ',FP)
+    print('True Positive  : ',TP)
+    print('')
+    
+    #Find Precision, Recall, and F1-Score
+    from sklearn.metrics import classification_report
+    print(classification_report(y_test,y_pred))
+
+#confusion Metrics
+confusion_metrics(ytest,SVM_pred)
