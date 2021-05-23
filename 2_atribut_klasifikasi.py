@@ -261,9 +261,6 @@ targetTest = DTest['Tertarik']
 Test = DTest.drop(['Tertarik'], axis=1)
 Test.head(3)
 
-print(targetTrain)
-print(targetTest)
-
 """### Split data"""
 
 Xtrain, ytrain = Train[:], targetTrain
@@ -274,22 +271,9 @@ Xtest = Xtest.values
 ytrain = ytrain.values
 ytest = ytest.values
 
-Xtrain
-
-Xtest
-
-ytrain
-
-ytest
-
-len(Xtest)
-
-len(ytest)
 
 """### SVM"""
 
-# from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-# import sklearn.metrics as metrics
 svm = SVC()
 svm.fit(Xtrain, ytrain)
 SVM_pred = svm.predict(Xtest)
